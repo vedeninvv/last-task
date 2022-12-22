@@ -21,6 +21,10 @@ class CartCycleSubscriber(
 ) {
     private val logger: Logger = LoggerFactory.getLogger(CartCycleSubscriber::class.java)
 
+    companion object {
+        val cycledUUID: UUID = UUID.randomUUID();
+    }
+
     @PostConstruct
     fun init() {
         subscriptionsManager.subscribe<CartAggregate>(this)
@@ -29,7 +33,9 @@ class CartCycleSubscriber(
 
     @SubscribeEvent
     fun cartCreatedSubscriber(event: CartCreatedEvent) {
-        logger.info("Cart created {}", event.cartId)
-        cartESService.create { it.createNewCart(UUID.randomUUID(), UUID.randomUUID()) }
+        if (event.cartId.equals(cycledUUID)) {
+            logger.info("Cart created {}", event.cartId)
+            cartESService.create { it.createNewCart(cycledUUID, UUID.randomUUID()) }
+        }
     }
 }

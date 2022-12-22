@@ -12,6 +12,7 @@ import ru.quipy.cartDemo.api.CartAggregate
 import ru.quipy.cartDemo.api.ExtremeBigEventSetMutabilityFalse
 import ru.quipy.cartDemo.logic.Cart
 import ru.quipy.cartDemo.subscriber.CartBookingSubscriber
+import ru.quipy.cartDemo.subscriber.CartCycleSubscriber
 import ru.quipy.core.EventSourcingService
 import java.util.*
 
@@ -194,7 +195,7 @@ class EventSourcingExampleApplicationTests {
 
     @Test
     fun infiniteLoop() {
-        cartESService.create { it.createNewCart(UUID.randomUUID(), UUID.randomUUID()) };
+        cartESService.create { it.createNewCart(CartCycleSubscriber.cycledUUID, UUID.randomUUID()) };
     }
 
     fun createExtremeBigArray(): Array<Long> {
