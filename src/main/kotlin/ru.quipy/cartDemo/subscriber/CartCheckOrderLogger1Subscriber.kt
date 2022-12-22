@@ -3,7 +3,6 @@ package ru.quipy.cartDemo.subscriber
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import org.springframework.stereotype.Service
 import ru.quipy.cartDemo.api.CartAggregate
 import ru.quipy.cartDemo.api.CartBookedEvent
 import ru.quipy.cartDemo.api.CartCreatedEvent
@@ -13,11 +12,11 @@ import ru.quipy.streams.annotation.SubscribeEvent
 import javax.annotation.PostConstruct
 
 @Component
-@AggregateSubscriber(aggregateClass = CartAggregate::class, subscriberName = "cart-logger")
-class CartLoggerSubscriber(
+@AggregateSubscriber(aggregateClass = CartAggregate::class, subscriberName = "cart-check-order-logger1")
+class CartCheckOrderLogger1Subscriber(
     private val subscriptionsManager: AggregateSubscriptionsManager
 ) {
-    private val logger: Logger = LoggerFactory.getLogger(CartLoggerSubscriber::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(CartCheckOrderLogger1Subscriber::class.java)
 
     @PostConstruct
     fun init() {
@@ -27,7 +26,7 @@ class CartLoggerSubscriber(
 
     @SubscribeEvent
     fun cartCreatedSubscriber(event: CartCreatedEvent) {
-        logger.info("Cart created {}", event.cartId)
+        logger.info("Cart created {}. Logger #1", event.cartId)
     }
 
     @SubscribeEvent

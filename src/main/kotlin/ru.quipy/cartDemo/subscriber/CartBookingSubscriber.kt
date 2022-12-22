@@ -2,6 +2,7 @@ package ru.quipy.cartDemo.subscriber
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Component
 import org.springframework.stereotype.Service
 import ru.quipy.cartDemo.api.CartAggregate
 import ru.quipy.cartDemo.api.CartBookedEvent
@@ -14,7 +15,7 @@ import ru.quipy.streams.annotation.SubscribeEvent
 import java.util.*
 import javax.annotation.PostConstruct
 
-@Service
+@Component
 @AggregateSubscriber(aggregateClass = CartAggregate::class, subscriberName = "cart-booking")
 class CartBookingSubscriber(
     private val subscriptionsManager: AggregateSubscriptionsManager,
@@ -33,7 +34,7 @@ class CartBookingSubscriber(
     }
 
     @SubscribeEvent
-    fun cartCreatedSubscriber(event: CartCreatedEvent) {
+    fun cartCreatedSubscribe(event: CartCreatedEvent) {
         logger.info("Compare userId {} with target userId {}", event.userId, TARGET_USER_ID)
         if (event.cartId == TARGET_USER_ID) {
             logger.info("UserIds are same. Try to book cart")
@@ -44,7 +45,7 @@ class CartBookingSubscriber(
     }
 
     @SubscribeEvent
-    fun cartBookedSubscriber(event: CartBookedEvent) {
+    fun cartBookedSubscribe(event: CartBookedEvent) {
         if (event.cartId == TARGET_USER_ID) {
             logger.info("Cart {} was booked with target userId", event.cartId)
         }
