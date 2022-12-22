@@ -3,35 +3,33 @@ package ru.quipy.cartDemo.subscriber
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import org.springframework.stereotype.Service
 import ru.quipy.cartDemo.api.CartAggregate
-import ru.quipy.cartDemo.api.CartBookedEvent
 import ru.quipy.cartDemo.api.CartCreatedEvent
+import ru.quipy.cartDemo.logic.Cart
+import ru.quipy.core.EventSourcingService
 import ru.quipy.streams.AggregateSubscriptionsManager
 import ru.quipy.streams.annotation.AggregateSubscriber
 import ru.quipy.streams.annotation.SubscribeEvent
+import java.util.*
 import javax.annotation.PostConstruct
 
 @Component
-@AggregateSubscriber(aggregateClass = CartAggregate::class, subscriberName = "cart-logger")
-class CartLoggerSubscriber(
-    private val subscriptionsManager: AggregateSubscriptionsManager
+@AggregateSubscriber(aggregateClass = CartAggregate::class, subscriberName = "cart-cycle-subscriber")
+class CartCycleSubscriber(
+    private val subscriptionsManager: AggregateSubscriptionsManager,
+    private val cartESService: EventSourcingService<UUID, CartAggregate, Cart>
 ) {
-    private val logger: Logger = LoggerFactory.getLogger(CartLoggerSubscriber::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(CartCycleSubscriber::class.java)
 
     @PostConstruct
     fun init() {
         subscriptionsManager.subscribe<CartAggregate>(this)
-        logger.info("Init CartLoggerSubscriber")
+        logger.info("Init CartCycleSubscriber")
     }
 
     @SubscribeEvent
     fun cartCreatedSubscriber(event: CartCreatedEvent) {
         logger.info("Cart created {}", event.cartId)
-    }
-
-    @SubscribeEvent
-    fun cartBookedSubscriber(event: CartBookedEvent) {
-        logger.info("Cart booked {} with sumPrice", event.cartId, event.sumPrice)
+        cartESService.create { it.createNewCart(UUID.randomUUID(), UUID.randomUUID()) }
     }
 }

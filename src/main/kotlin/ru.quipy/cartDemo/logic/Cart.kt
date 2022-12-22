@@ -3,6 +3,7 @@ package ru.quipy.cartDemo.logic
 import ru.quipy.cartDemo.api.CartAggregate
 import ru.quipy.cartDemo.api.CartBookedEvent
 import ru.quipy.cartDemo.api.CartCreatedEvent
+import ru.quipy.cartDemo.api.ExtremeBigEventSetMutabilityFalse
 import ru.quipy.core.annotations.StateTransitionFunc
 import ru.quipy.domain.AggregateState
 import java.util.*
@@ -61,6 +62,11 @@ class Cart : AggregateState<UUID, CartAggregate> {
     fun bookCart(event: CartBookedEvent) {
         mutability = false;
         order = Order(event.orderId, event.sumPrice);
+    }
+
+    @StateTransitionFunc
+    fun extremeBigEvent(event: ExtremeBigEventSetMutabilityFalse) {
+        mutability = false;
     }
 }
 

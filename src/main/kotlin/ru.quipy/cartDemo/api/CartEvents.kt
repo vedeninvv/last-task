@@ -31,3 +31,10 @@ class CartBookedEvent(
     name = CART_BOOKED,
     createdAt = System.currentTimeMillis()
 )
+
+@DomainEvent(name = "Extreme_big_event")
+class ExtremeBigEventSetMutabilityFalse(
+    val bigData: Array<Long>
+) : Event<CartAggregate>(
+    name = "Extreme_big_event"
+)
